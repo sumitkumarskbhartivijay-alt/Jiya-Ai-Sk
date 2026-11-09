@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global catch-all safety net: deny all by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['id', 'email']) &&
+             data.keys().hasOnly(['id', 'displayName', 'email', 'photoURL', 'createdAt', 'updatedAt']) &&
+             data.id is string && data.id == request.auth.uid &&
+             data.email is string && data.email.size() <= 256 &&
+             (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 120)) &&
+             (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 1024)) &&
+             (!('createdAt' in data) || data.createdAt is string) &&
+             (!('updatedAt' in data) || data.updatedAt is string);
+    }
+
+    function isValidChatMessage(data) {
+      return data.keys().hasAll(['id', 'userId', 'role', 'content', 'mode']) &&
+             data.keys().hasOnly(['id', 'userId', 'role', 'content', 'mode', 'timestamp', 'createdAt', 'audioVoiceName']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.role in ['user', 'assistant', 'system'] &&
+             data.content is string && data.content.size() <= 10000 &&
+             data.mode in ['gf', 'jarvis', 'dost', 'professional', 'funny'] &&
+             (!('timestamp' in data) || (data.timestamp is string && data.timestamp.size() <= 30)) &&
+             (!('createdAt' in data) || data.createdAt is string) &&
+             (!('audioVoiceName' in data) || (data.audioVoiceName is string && data.audioVoiceName.size() <= 60));
+    }
+
+    // User profile document
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming());
+      allow update: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming()) && incoming().id == existing().id;
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // User private chat messages subcollection
+      match /messages/{messageId} {
+        allow get: if isOwner(userId) && isValidId(messageId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(messageId) && isValidChatMessage(incoming());
+        allow update: if isOwner(userId) && isValidId(messageId) && isValidChatMessage(incoming()) && incoming().userId == existing().userId;
+        allow delete: if isOwner(userId) && isValidId(messageId);
+      }
+    }
+
+    // Health / connection test document
+    match /test/{testId} {
+      allow get: if true;
+    }
+  }
+}

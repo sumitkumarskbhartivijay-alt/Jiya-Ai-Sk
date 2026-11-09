@@ -1,0 +1,112 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  }
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom scrollbar for chat and drawer */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 16, 32, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(147, 51, 234, 0.3);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(147, 51, 234, 0.6);
+}
+
+/* Futuristic glowing keyframes */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.35);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.04);
+    box-shadow: 0 0 45px rgba(56, 189, 248, 0.6), 0 0 70px rgba(168, 85, 247, 0.4);
+  }
+}
+
+@keyframes holographic-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes holographic-reverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes wave-bounce {
+  0%, 100% { height: 10px; }
+  50% { height: 38px; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-holo-spin {
+  animation: holographic-spin 20s linear infinite;
+}
+
+.animate-holo-reverse {
+  animation: holographic-reverse 25s linear infinite;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(12, 18, 38, 0.68);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-glow {
+  background: rgba(14, 22, 46, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(168, 85, 247, 0.22);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 0 16px rgba(147, 51, 234, 0.06);
+}
+
+@keyframes border-light-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 14px rgba(255, 60, 0, 0.45),
+      inset 0 0 14px rgba(255, 215, 0, 0.2),
+      inset 0 0 28px rgba(0, 240, 255, 0.12);
+    border-color: rgba(255, 90, 0, 0.65);
+  }
+  50% {
+    box-shadow:
+      0 0 22px rgba(255, 42, 0, 0.65),
+      inset 0 0 20px rgba(80, 255, 50, 0.25),
+      inset 0 0 36px rgba(30, 144, 255, 0.2);
+    border-color: rgba(255, 165, 0, 0.85);
+  }
+}
+
+.border-light-card {
+  animation: border-light-pulse 4s ease-in-out infinite;
+}
+

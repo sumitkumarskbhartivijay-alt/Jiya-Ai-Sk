@@ -1,0 +1,96 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account and profile information",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique Firebase user ID (UID)",
+          "maxLength": 128
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the user",
+          "maxLength": 120
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email address of the user",
+          "maxLength": 256
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "URL to user profile picture",
+          "maxLength": 1024
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp of user creation"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp of profile update"
+        }
+      },
+      "required": ["id", "email"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Individual conversational message in user private chat history",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the message",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owner user ID (matches request.auth.uid)",
+          "maxLength": 128
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "assistant", "system"],
+          "description": "Speaker role in dialogue"
+        },
+        "content": {
+          "type": "string",
+          "description": "Text content of the message",
+          "maxLength": 10000
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["gf", "jarvis", "dost", "professional", "funny"],
+          "description": "JIYA personality mode active for message"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Human readable time representation",
+          "maxLength": 30
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO server timestamp of creation"
+        }
+      },
+      "required": ["id", "userId", "role", "content", "mode"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document private to each authenticated user"
+    },
+    "/users/{userId}/messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Subcollection containing user-specific chat messages"
+    }
+  }
+}

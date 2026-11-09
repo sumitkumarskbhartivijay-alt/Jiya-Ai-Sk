@@ -1,0 +1,10 @@
+{
+  "name": "JIYA AI - Advanced AI Voice Assistant",
+  "description": "Futuristic AI Voice Assistant with 5 distinct personality modes, real human voice synthesis, Gemini 3.8 intelligence, 3D interactive avatar, and mobile tools. Created by Sumit Kumar.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
